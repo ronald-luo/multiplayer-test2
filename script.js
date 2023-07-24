@@ -3,11 +3,10 @@ let canvas = createHiPPICanvas(window.innerWidth, window.innerHeight);
 let ctx = canvas.getContext("2d");
 const keysPressed = {};
 let players = [];
+let foods = [];
 
 let world = new World();
 let player1 = new Player();
-
-let foods = [[100,100],[1000,1000],[750,750]]
 
 
 // event listeners
@@ -36,25 +35,20 @@ document.addEventListener('keyup', (event) => {
     //     0.5*window.innerHeight
     // );
 
-    for (let food of foods) {
-        let x = food[0]
-        let y = food[1]
+    for (let index = 0; index < 50; index++) {
+        foods.push(new Food());
+    }
 
+    for (let food of foods) {
+        let x = food.x
+        let y = food.y
         if (x > player1.camera.startX && 
             x < player1.camera.endX && 
             y > player1.camera.startY && 
             y < player1.camera.endY) {
-            ctx.fillStyle='red';
-            ctx.fillRect(x-player1.camera.startX , y-player1.camera.startY, 10, 10)
+                food.draw(ctx, player1);
         }
     }
-
-    // ctx.fillRect(
-    //     window.innerWidth*0.5 - 0.025*window.innerWidth, 
-    //     window.innerHeight*0.5 - 0.025*window.innerHeight, 
-    //     0.05*window.innerWidth, 
-    //     0.05*window.innerHeight
-    // );
 
 })();
 
@@ -74,15 +68,13 @@ document.addEventListener('keyup', (event) => {
     // );
 
     for (let food of foods) {
-        let x = food[0]
-        let y = food[1]
-
+        let x = food.x
+        let y = food.y
         if (x > player1.camera.startX && 
             x < player1.camera.endX && 
             y > player1.camera.startY && 
             y < player1.camera.endY) {
-            ctx.fillStyle='red';
-            ctx.fillRect(x-player1.camera.startX , y-player1.camera.startY, 10,10)
+                food.draw(ctx, player1);
         }
     }
 })();

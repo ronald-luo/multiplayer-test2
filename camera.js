@@ -1,5 +1,5 @@
 class Camera {
-    constructor(playerPosition) {
+    constructor() {
         this.startX = 0;
         this.startY = 0;
         this.endX = window.innerWidth;
