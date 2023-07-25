@@ -1,12 +1,9 @@
 // create page variables
 let canvas = createHiPPICanvas(window.innerWidth, window.innerHeight);
 let ctx = canvas.getContext("2d");
-const keysPressed = {};
-let players = [];
-let foods = [];
-
+let keysPressed = {};
 let world = new World();
-let player1 = new Player();
+let playerId = 'ABCD';
 
 
 // event listeners
@@ -23,10 +20,28 @@ document.addEventListener('keyup', (event) => {
 
 // IFFE for on load
 (function onLoad() {
-    player1.draw(ctx)
-    player1.edges()
-    player1.cameraFollow(ctx)
-    player1.update()
+    world.players[playerId] = new Player();
+    world.players[playerId].draw(ctx)
+    world.players[playerId].edges()
+    world.players[playerId].cameraFollow(ctx)
+    world.players[playerId].update()
+
+    for (let food of world.foods) {
+        let x = food.x
+        let y = food.y
+        if (x > world.players[playerId].camera.startX && 
+            x < world.players[playerId].camera.endX && 
+            y > world.players[playerId].camera.startY && 
+            y < world.players[playerId].camera.endY) {
+                food.draw(ctx, world.players[playerId]);
+        }
+    }
+
+    for (let food of world.foods) {
+        world.players[playerId].eat(food);
+    }
+
+    console.log(world)
 
     // ctx.fillRect(
     //     window.innerWidth*0.5 - 0.25*window.innerWidth, 
@@ -34,21 +49,6 @@ document.addEventListener('keyup', (event) => {
     //     0.5*window.innerWidth, 
     //     0.5*window.innerHeight
     // );
-
-    for (let index = 0; index < 50; index++) {
-        foods.push(new Food());
-    }
-
-    for (let food of foods) {
-        let x = food.x
-        let y = food.y
-        if (x > player1.camera.startX && 
-            x < player1.camera.endX && 
-            y > player1.camera.startY && 
-            y < player1.camera.endY) {
-                food.draw(ctx, player1);
-        }
-    }
 
 })();
 
@@ -56,10 +56,26 @@ document.addEventListener('keyup', (event) => {
 (function animation() {
     window.requestAnimationFrame(animation)
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    player1.draw(ctx)
-    player1.edges()
-    player1.cameraFollow(ctx)
-    player1.update()
+    world.players[playerId].draw(ctx)
+    world.players[playerId].edges()
+    world.players[playerId].cameraFollow(ctx)
+    world.players[playerId].update()
+
+    for (let food of world.foods) {
+        let x = food.x
+        let y = food.y
+        if (x > world.players[playerId].camera.startX && 
+            x < world.players[playerId].camera.endX && 
+            y > world.players[playerId].camera.startY && 
+            y < world.players[playerId].camera.endY) {
+                food.draw(ctx, world.players[playerId]);
+        }
+    }
+
+    for (let food of world.foods) {
+        world.players[playerId].eat(food);
+    }
+
     // ctx.fillRect(
     //     window.innerWidth*0.5 - 0.25*window.innerWidth, 
     //     window.innerHeight*0.5 - 0.25*window.innerHeight, 
@@ -67,16 +83,6 @@ document.addEventListener('keyup', (event) => {
     //     0.5*window.innerHeight
     // );
 
-    for (let food of foods) {
-        let x = food.x
-        let y = food.y
-        if (x > player1.camera.startX && 
-            x < player1.camera.endX && 
-            y > player1.camera.startY && 
-            y < player1.camera.endY) {
-                food.draw(ctx, player1);
-        }
-    }
 })();
 
 
@@ -111,10 +117,10 @@ function handlePlayerMovement() {
         yDirection *= diagonalFactor;
     }
 
-    // player1.velocity.x = xDirection*playerSpeed + player1.velocity.x / playerSpeed;
-    // player1.velocity.y = yDirection*playerSpeed + player1.velocity.y / playerSpeed; 
-    player1.velocity.x = xDirection*playerSpeed
-    player1.velocity.y = yDirection*playerSpeed
+    world.players[playerId].velocity.x = xDirection*playerSpeed + world.players[playerId].velocity.x / playerSpeed;
+    world.players[playerId].velocity.y = yDirection*playerSpeed + world.players[playerId].velocity.y / playerSpeed; 
+    // player1.velocity.x = xDirection*playerSpeed
+    // player1.velocity.y = yDirection*playerSpeed
 };
 
 // create canvas with the device resolution.
